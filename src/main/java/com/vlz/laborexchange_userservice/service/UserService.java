@@ -1,0 +1,17 @@
+package com.vlz.laborexchange_userservice.service;
+
+import com.vlz.laborexchange_userservice.repository.UserRepository;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+@Service
+@RequiredArgsConstructor
+public class UserService {
+    private final UserRepository userRepository;
+
+    @Transactional(readOnly = true)
+    public boolean existsUserByEmail(String email){
+        return userRepository.existsByEmail(email);
+    }
+}
