@@ -14,4 +14,9 @@ public class UserService {
     public boolean existsUserByEmail(String email){
         return userRepository.existsByEmail(email);
     }
+
+    @Transactional(readOnly = true)
+    public boolean checkLogin(String email, String password){
+        return userRepository.existsByEmailAndPassword(email, password);
+    }
 }

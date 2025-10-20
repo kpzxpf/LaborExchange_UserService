@@ -1,5 +1,6 @@
 package com.vlz.laborexchange_userservice.controller;
 
+import com.vlz.laborexchange_userservice.dto.LoginRequest;
 import com.vlz.laborexchange_userservice.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -18,4 +19,9 @@ public class UserController {
         return userService.existsUserByEmail(email);
     }
 
+
+    @GetMapping("/api/users/checkLogin/")
+    boolean checkLogin(LoginRequest request){
+        return userService.checkLogin(request.getEmail(), request.getPassword());
+    }
 }
