@@ -1,8 +1,8 @@
 package com.vlz.laborexchange_userservice.listener;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.vlz.laborexchange_userservice.dto.RegisterRequest;
-import com.vlz.laborexchange_userservice.entity.User;
-import com.vlz.laborexchange_userservice.repository.UserRepository;
+import com.vlz.laborexchange_userservice.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.annotation.KafkaListener;
@@ -12,21 +12,18 @@ import org.springframework.stereotype.Component;
 @Component
 @RequiredArgsConstructor
 public class UserRegistrationListener {
-    private final UserRepository userRepository;
+    private final UserService userService;
+    private final ObjectMapper mapper = new ObjectMapper();
 
-
-    @KafkaListener(topics = "${topics.user-registration}", groupId = "user-group")
-    public void handleUserRegistration(RegisterRequest request) {
+    @KafkaListener(topics = "${spring.kafka.topics.user-registration}", groupId = "${spring.kafka.consumer.group-id}")
+    public void listen(String message) {
         try {
-            User user = new User();
-            user.setEmail(request.getEmail());
-            user.setPassword(request.getPassword());
-            userRepository.save(user);
+            RegisterRequest request = mapper.readValue(message, RegisterRequest.class);
+            log.info("Event received: {}", request);
 
-            log.info("User registered in DB: {}", user.getEmail());
+            userService.create(request);
         } catch (Exception e) {
-            log.error("Error handling user registration for email: {}", request.getEmail(), e);
-            throw e;
+            log.error("JSON parsing error", e);
         }
     }
 }
