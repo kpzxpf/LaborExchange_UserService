@@ -32,4 +32,9 @@ public class UserService {
 
         userRepository.save(user);
     }
+
+    @Transactional(readOnly = true)
+    public String getEmailById(Long id) {
+        return userRepository.getEmailByUserId(id);
+    }
 }

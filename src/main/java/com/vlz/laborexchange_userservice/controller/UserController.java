@@ -17,7 +17,12 @@ public class UserController {
     }
 
     @PostMapping("/checkLogin")
-    boolean checkLogin(@RequestBody LoginRequest request) {
+    public boolean checkLogin(@RequestBody LoginRequest request) {
         return userService.checkLogin(request.getEmail(), request.getPassword());
+    }
+
+    @GetMapping("/emailById")
+    public String getEmailById(@RequestParam("id") Long id) {
+        return userService.getEmailById(id);
     }
 }
