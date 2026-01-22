@@ -35,6 +35,6 @@ public class UserService {
 
     @Transactional(readOnly = true)
     public String getEmailById(Long id) {
-        return userRepository.getEmailByUserId(id);
+        return userRepository.getEmailById(id);
     }
 }
