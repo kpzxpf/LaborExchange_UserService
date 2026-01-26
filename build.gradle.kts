@@ -37,6 +37,8 @@ dependencies {
     implementation("com.fasterxml.jackson.core:jackson-databind")
     runtimeOnly("org.postgresql:postgresql")
 
+    implementation("com.github.loki4j:loki-logback-appender:1.5.0")
+
     implementation("org.flywaydb:flyway-core")
     runtimeOnly("org.flywaydb:flyway-database-postgresql")
 
