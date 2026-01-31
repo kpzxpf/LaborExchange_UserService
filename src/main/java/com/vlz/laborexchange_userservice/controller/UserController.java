@@ -1,6 +1,8 @@
 package com.vlz.laborexchange_userservice.controller;
 
 import com.vlz.laborexchange_userservice.dto.LoginRequest;
+import com.vlz.laborexchange_userservice.dto.UserDto;
+import com.vlz.laborexchange_userservice.mapper.UserMapper;
 import com.vlz.laborexchange_userservice.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -10,10 +12,16 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 public class UserController {
     private final UserService userService;
+    private final UserMapper userMapper;
 
     @GetMapping("/existsByEmail")
     public boolean existsUserByEmail(@RequestParam("email") String email) {
         return userService.existsUserByEmail(email);
+    }
+
+    @PostMapping("/update")
+    public UserDto update(UserDto userDto){
+        return userMapper.toDto(userService.update(userDto));
     }
 
     @PostMapping("/checkLogin")

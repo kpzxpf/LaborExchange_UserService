@@ -1,6 +1,7 @@
 package com.vlz.laborexchange_userservice.service;
 
 import com.vlz.laborexchange_userservice.dto.RegisterRequest;
+import com.vlz.laborexchange_userservice.dto.UserDto;
 import com.vlz.laborexchange_userservice.dto.exception.EntityNotFoundException;
 import com.vlz.laborexchange_userservice.entity.Role;
 import com.vlz.laborexchange_userservice.entity.User;
@@ -40,6 +41,20 @@ public class UserService {
         userRepository.save(user);
     }
 
+    @Transactional
+    public User update(UserDto userDto) {
+        User user = getById(userDto.getId());
+
+        user.setUsername(userDto.getUsername());
+        user.setPhoneNumber(userDto.getPhoneNumber());
+        user.setEmail(userDto.getEmail());
+        user.setFirstName(userDto.getFirstName());
+        user.setLastName(userDto.getLastName());
+        user.setUsername(userDto.getUsername());
+
+        return userRepository.save(user);
+    }
+
     @Transactional(readOnly = true)
     public String getEmailById(Long id) {
         return userRepository.getEmailById(id);
@@ -48,5 +63,13 @@ public class UserService {
     @Transactional(readOnly = true)
     public Long getUserIdByEmail(String email) {
         return userRepository.getUserIdByEmail(email);
+    }
+
+    @Transactional(readOnly = true)
+    public User getById(Long id) {
+        return userRepository.findById(id).orElseThrow(() -> {
+            log.error("User not found with id {}", id);
+            return new EntityNotFoundException("User not found");
+        });
     }
 }
