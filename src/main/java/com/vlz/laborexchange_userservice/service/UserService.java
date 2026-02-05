@@ -7,6 +7,7 @@ import com.vlz.laborexchange_userservice.entity.User;
 import com.vlz.laborexchange_userservice.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -16,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class UserService {
     private final UserRepository userRepository;
     private final RoleService roleService;
+    private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
     @Transactional(readOnly = true)
     public boolean existsUserByEmail(String email) {
@@ -24,7 +26,9 @@ public class UserService {
 
     @Transactional(readOnly = true)
     public boolean checkLogin(String email, String password) {
-        return userRepository.existsByEmailAndPassword(email, password);
+        String passwordEncoded = bCryptPasswordEncoder.encode(password);
+
+        return userRepository.existsByEmailAndPassword(email, passwordEncoded);
     }
 
     @Transactional
@@ -33,7 +37,7 @@ public class UserService {
                 .email(registerRequest.getEmail())
                 .username(registerRequest.getUsername())
                 .phoneNumber(registerRequest.getPhone())
-                .password(registerRequest.getPassword())
+                .password(bCryptPasswordEncoder.encode(registerRequest.getPassword()))
                 .role(roleService.findByRoleName(registerRequest.getUserRole()))
                 .build();
 
