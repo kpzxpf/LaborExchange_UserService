@@ -2,8 +2,7 @@ package com.vlz.laborexchange_userservice.service;
 
 import com.vlz.laborexchange_userservice.dto.RegisterRequest;
 import com.vlz.laborexchange_userservice.dto.UserDto;
-import com.vlz.laborexchange_userservice.dto.exception.EntityNotFoundException;
-import com.vlz.laborexchange_userservice.entity.Role;
+import com.vlz.laborexchange_userservice.exception.EntityNotFoundException;
 import com.vlz.laborexchange_userservice.entity.User;
 import com.vlz.laborexchange_userservice.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -71,5 +70,18 @@ public class UserService {
             log.error("User not found with id {}", id);
             return new EntityNotFoundException("User not found");
         });
+    }
+
+    @Transactional(readOnly = true)
+    public UserDto getUserProfile(Long id) {
+        User user = getById(id);
+
+        return UserDto.builder()
+                .id(user.getId())
+                .username(user.getUsername())
+                .email(user.getEmail())
+                .phoneNumber(user.getPhoneNumber())
+                .roleName(user.getRole().getRoleName())
+                .build();
     }
 }

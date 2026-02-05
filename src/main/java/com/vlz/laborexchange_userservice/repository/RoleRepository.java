@@ -8,11 +8,12 @@ import org.springframework.data.repository.query.Param;
 import java.util.Optional;
 
 public interface RoleRepository extends JpaRepository<Role, Long> {
+
     Optional<Role> findByRoleName(String roleName);
 
     @Query("SELECT r.roleName FROM Role r JOIN r.users u WHERE u.email = :email")
-    String findRoleNameByUserEmail(@Param("email") String email);
+    Optional<String> findRoleNameByUserEmail(@Param("email") String email);
 
     @Query("SELECT r.roleName FROM Role r JOIN r.users u WHERE u.id = :userId")
-    String findRoleNameByUserId(@Param("userId") Long userId);
+    Optional<String> findRoleNameByUserId(@Param("userId") Long userId);
 }

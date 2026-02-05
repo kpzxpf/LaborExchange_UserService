@@ -1,6 +1,6 @@
 package com.vlz.laborexchange_userservice.service;
 
-import com.vlz.laborexchange_userservice.dto.exception.EntityNotFoundException;
+import com.vlz.laborexchange_userservice.exception.EntityNotFoundException;
 import com.vlz.laborexchange_userservice.entity.Role;
 import com.vlz.laborexchange_userservice.repository.RoleRepository;
 import lombok.RequiredArgsConstructor;
@@ -25,11 +25,17 @@ public class RoleService {
 
     @Transactional(readOnly = true)
     public String getUserRoleByEmail(String email) {
-        return roleRepository.findRoleNameByUserEmail(email);
+        return roleRepository.findRoleNameByUserEmail(email).orElseThrow(() -> {
+            log.error("User not found with email {}", email);
+            return new EntityNotFoundException("User not found with email " + email);
+        });
     }
 
     @Transactional(readOnly = true)
     public String getUserRoleById(Long id) {
-        return roleRepository.findRoleNameByUserId(id);
+        return roleRepository.findRoleNameByUserId(id).orElseThrow(() -> {
+            log.error("User not found with id {}", id);
+            return new EntityNotFoundException("User not found with id " + id);
+        });
     }
 }

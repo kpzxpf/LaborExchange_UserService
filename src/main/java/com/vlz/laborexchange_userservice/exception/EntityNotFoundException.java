@@ -1,4 +1,4 @@
-package com.vlz.laborexchange_userservice.dto.exception;
+package com.vlz.laborexchange_userservice.exception;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;

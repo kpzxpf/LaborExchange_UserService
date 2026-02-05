@@ -24,6 +24,12 @@ public class UserController {
         return userMapper.toDto(userService.update(userDto));
     }
 
+    @GetMapping("/{id}/profile")
+    public UserDto getUserProfile(@PathVariable Long id) {
+        UserDto userDto = userService.getUserProfile(id);
+        return userDto;
+    }
+
     @PostMapping("/checkLogin")
     public boolean checkLogin(@RequestBody LoginRequest request) {
         return userService.checkLogin(request.getEmail(), request.getPassword());

@@ -37,9 +37,5 @@ ALTER TABLE users
     ADD CONSTRAINT chk_phone_format
         CHECK (phone_number IS NULL OR phone_number ~ '^\+?[0-9]{10,15}$');
 
-INSERT INTO roles (role_name)
-VALUES ('JOB_SEEKER');
-INSERT INTO roles (role_name)
-VALUES ('EMPLOYER');
-INSERT INTO roles (role_name)
-VALUES ('ADMIN');
+
+
