@@ -9,5 +9,4 @@ class LaborExchangeUserServiceApplicationTests {
     @Test
     void contextLoads() {
     }
-
 }
