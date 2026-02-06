@@ -30,7 +30,7 @@ class UserServiceTest {
     @Mock
     private RoleService roleService;
     @Mock
-    private BCryptPasswordEncoder bCryptPasswordEncoder;
+    private BCryptPasswordEncoder passwordEncoder;
 
     @InjectMocks
     private UserService userService;
@@ -52,7 +52,7 @@ class UserServiceTest {
         Role role = new Role();
         role.setRoleName("ROLE_USER");
 
-        when(bCryptPasswordEncoder.encode("raw_password")).thenReturn("encoded_password");
+        when(passwordEncoder.encode("raw_password")).thenReturn("encoded_password");
         when(roleService.findByRoleName("ROLE_USER")).thenReturn(role);
 
         // Act
@@ -74,7 +74,7 @@ class UserServiceTest {
         // Arrange
         String rawPassword = "pass";
         String encodedPassword = "encoded_pass";
-        when(bCryptPasswordEncoder.encode(rawPassword)).thenReturn(encodedPassword);
+        when(passwordEncoder.encode(rawPassword)).thenReturn(encodedPassword);
         when(userRepository.existsByEmailAndPassword(EMAIL, encodedPassword)).thenReturn(true);
 
         // Act

@@ -17,7 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class UserService {
     private final UserRepository userRepository;
     private final RoleService roleService;
-    private final BCryptPasswordEncoder bCryptPasswordEncoder;
+    private final BCryptPasswordEncoder passwordEncoder;
 
     @Transactional(readOnly = true)
     public boolean existsUserByEmail(String email) {
@@ -26,7 +26,7 @@ public class UserService {
 
     @Transactional(readOnly = true)
     public boolean checkLogin(String email, String password) {
-        String passwordEncoded = bCryptPasswordEncoder.encode(password);
+        String passwordEncoded = passwordEncoder.encode(password);
 
         return userRepository.existsByEmailAndPassword(email, passwordEncoded);
     }
@@ -37,7 +37,7 @@ public class UserService {
                 .email(registerRequest.getEmail())
                 .username(registerRequest.getUsername())
                 .phoneNumber(registerRequest.getPhone())
-                .password(bCryptPasswordEncoder.encode(registerRequest.getPassword()))
+                .password(passwordEncoder.encode(registerRequest.getPassword()))
                 .role(roleService.findByRoleName(registerRequest.getUserRole()))
                 .build();
 
