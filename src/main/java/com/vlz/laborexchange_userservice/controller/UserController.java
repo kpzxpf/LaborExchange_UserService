@@ -20,7 +20,7 @@ public class UserController {
     }
 
     @PostMapping("/update")
-    public UserDto update(UserDto userDto){
+    public UserDto update(@RequestBody UserDto userDto){
         return userMapper.toDto(userService.update(userDto));
     }
 
