@@ -24,6 +24,11 @@ public class UserController {
         return userMapper.toDto(userService.update(userDto));
     }
 
+    @GetMapping("/{userId}/username")
+    public String getUsernameByUserId(@PathVariable Long userId) {
+       return userService.getUsernameByUserId(userId);
+    }
+
     @GetMapping("/{id}/profile")
     public UserDto getUserProfile(@PathVariable Long id) {
         UserDto userDto = userService.getUserProfile(id);

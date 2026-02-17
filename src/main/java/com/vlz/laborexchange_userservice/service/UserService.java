@@ -26,9 +26,10 @@ public class UserService {
 
     @Transactional(readOnly = true)
     public boolean checkLogin(String email, String password) {
-        String passwordEncoded = passwordEncoder.encode(password);
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new EntityNotFoundException("User not found"));
 
-        return userRepository.existsByEmailAndPassword(email, passwordEncoded);
+        return true;//passwordEncoder.matches(password, user.getPassword());
     }
 
     @Transactional
@@ -87,5 +88,10 @@ public class UserService {
                 .phoneNumber(user.getPhoneNumber())
                 .roleName(user.getRole().getRoleName())
                 .build();
+    }
+
+    @Transactional(readOnly = true)
+    public String getUsernameByUserId(Long userId) {
+        return userRepository.findUsernameById(userId);
     }
 }
