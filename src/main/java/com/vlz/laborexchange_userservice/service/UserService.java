@@ -29,11 +29,11 @@ public class UserService {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new EntityNotFoundException("User not found"));
 
-        return true;//passwordEncoder.matches(password, user.getPassword());
+        return passwordEncoder.matches(password, user.getPassword());
     }
 
     @Transactional
-    public void create(RegisterRequest registerRequest) {
+    public Long create(RegisterRequest registerRequest) {
         User user = User.builder()
                 .email(registerRequest.getEmail())
                 .username(registerRequest.getUsername())
@@ -42,7 +42,7 @@ public class UserService {
                 .role(roleService.findByRoleName(registerRequest.getUserRole()))
                 .build();
 
-        userRepository.save(user);
+        return userRepository.save(user).getId();
     }
 
     @Transactional

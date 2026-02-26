@@ -1,6 +1,7 @@
 package com.vlz.laborexchange_userservice.controller;
 
 import com.vlz.laborexchange_userservice.dto.LoginRequest;
+import com.vlz.laborexchange_userservice.dto.RegisterRequest;
 import com.vlz.laborexchange_userservice.dto.UserDto;
 import com.vlz.laborexchange_userservice.mapper.UserMapper;
 import com.vlz.laborexchange_userservice.service.UserService;
@@ -14,13 +15,19 @@ public class UserController {
     private final UserService userService;
     private final UserMapper userMapper;
 
+    @PostMapping("/register")
+    public Long register(@RequestBody RegisterRequest request) {
+        return userService.create(request);
+    }
+
     @GetMapping("/existsByEmail")
     public boolean existsUserByEmail(@RequestParam("email") String email) {
         return userService.existsUserByEmail(email);
     }
 
-    @PostMapping("/update")
-    public UserDto update(@RequestBody UserDto userDto){
+    @PutMapping("/{id}")
+    public UserDto update(@PathVariable Long id, @RequestBody UserDto userDto) {
+        userDto.setId(id);
         return userMapper.toDto(userService.update(userDto));
     }
 

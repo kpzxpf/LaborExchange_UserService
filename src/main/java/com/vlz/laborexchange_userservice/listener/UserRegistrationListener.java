@@ -13,7 +13,7 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class UserRegistrationListener {
     private final UserService userService;
-    private final ObjectMapper mapper = new ObjectMapper();
+    private final ObjectMapper mapper;
 
     @KafkaListener(topics = "${spring.kafka.topics.user-registration}", groupId = "${spring.kafka.consumer.group-id}")
     public void listen(String message) {
