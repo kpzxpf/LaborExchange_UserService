@@ -7,6 +7,9 @@ import com.vlz.laborexchange_userservice.entity.User;
 import com.vlz.laborexchange_userservice.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -45,6 +48,10 @@ public class UserService {
         return userRepository.save(user).getId();
     }
 
+    @Caching(evict = {
+        @CacheEvict(value = "users:profile", key = "#userDto.id"),
+        @CacheEvict(value = "users:email", key = "#userDto.id")
+    })
     @Transactional
     public User update(UserDto userDto) {
         User user = getById(userDto.getId());
@@ -54,11 +61,11 @@ public class UserService {
         user.setEmail(userDto.getEmail());
         user.setFirstName(userDto.getFirstName());
         user.setLastName(userDto.getLastName());
-        user.setUsername(userDto.getUsername());
 
         return userRepository.save(user);
     }
 
+    @Cacheable(value = "users:email", key = "#id")
     @Transactional(readOnly = true)
     public String getEmailById(Long id) {
         return userRepository.getEmailById(id);
@@ -77,6 +84,7 @@ public class UserService {
         });
     }
 
+    @Cacheable(value = "users:profile", key = "#id")
     @Transactional(readOnly = true)
     public UserDto getUserProfile(Long id) {
         User user = getById(id);
@@ -90,6 +98,7 @@ public class UserService {
                 .build();
     }
 
+    @Cacheable(value = "users:profile", key = "#userId + ':username'")
     @Transactional(readOnly = true)
     public String getUsernameByUserId(Long userId) {
         return userRepository.findUsernameById(userId);
