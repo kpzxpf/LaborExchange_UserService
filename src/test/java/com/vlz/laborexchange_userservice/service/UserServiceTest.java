@@ -54,6 +54,11 @@ class UserServiceTest {
 
         when(passwordEncoder.encode("raw_password")).thenReturn("encoded_password");
         when(roleService.findByRoleName("ROLE_USER")).thenReturn(role);
+        when(userRepository.save(any(User.class))).thenAnswer(invocation -> {
+            User u = invocation.getArgument(0);
+            return User.builder().id(1L).email(u.getEmail()).username(u.getUsername())
+                    .password(u.getPassword()).role(u.getRole()).build();
+        });
 
         // Act
         userService.create(request);
@@ -69,20 +74,22 @@ class UserServiceTest {
     }
 
     @Test
-    @DisplayName("Проверка логина: пароль должен кодироваться перед проверкой")
-    void checkLogin_ShouldEncodePasswordBeforeExistsCall() {
+    @DisplayName("Проверка логина: возвращает true при совпадении пароля")
+    void checkLogin_ShouldReturnTrueWhenPasswordMatches() {
         // Arrange
         String rawPassword = "pass";
-        String encodedPassword = "encoded_pass";
-        when(passwordEncoder.encode(rawPassword)).thenReturn(encodedPassword);
-        when(userRepository.existsByEmailAndPassword(EMAIL, encodedPassword)).thenReturn(true);
+        String storedHash = "$2a$10$hashedPasswordValue";
+        User user = User.builder().id(USER_ID).email(EMAIL).password(storedHash).build();
+
+        when(userRepository.findByEmail(EMAIL)).thenReturn(Optional.of(user));
+        when(passwordEncoder.matches(rawPassword, storedHash)).thenReturn(true);
 
         // Act
         boolean result = userService.checkLogin(EMAIL, rawPassword);
 
         // Assert
         assertTrue(result);
-        verify(userRepository).existsByEmailAndPassword(EMAIL, encodedPassword);
+        verify(passwordEncoder).matches(rawPassword, storedHash);
     }
 
     @Test
