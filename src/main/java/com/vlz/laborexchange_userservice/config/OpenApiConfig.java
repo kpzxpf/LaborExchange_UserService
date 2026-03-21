@@ -1,9 +1,10 @@
 package com.vlz.laborexchange_userservice.config;
 
+import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.OpenAPI;
-import io.swagger.v3.oas.models.info.Contact;
 import io.swagger.v3.oas.models.info.Info;
 import io.swagger.v3.oas.models.info.License;
+import io.swagger.v3.oas.models.security.SecurityScheme;
 import io.swagger.v3.oas.models.servers.Server;
 import io.swagger.v3.oas.models.tags.Tag;
 import org.springframework.context.annotation.Bean;
@@ -21,14 +22,21 @@ public class OpenApiConfig {
                         .title("User Service API")
                         .version("1.0.0")
                         .description("""
-                                Manages user accounts and roles for LaborExchange.
+                                Manages user accounts and roles.
 
                                 **Internal service** — most endpoints are called by AuthService via Feign, not by end users directly.
 
                                 **Caching:** Profile and email lookups are cached in Redis (TTL: 15 min / 60 min).
+
+                                **Database:** PostgreSQL (`userdb`, port 5434).
                                 """)
-                        .contact(new Contact().name("LaborExchange Team"))
                         .license(new License().name("MIT")))
+                .components(new Components()
+                        .addSecuritySchemes("Bearer Authentication", new SecurityScheme()
+                                .type(SecurityScheme.Type.HTTP)
+                                .scheme("bearer")
+                                .bearerFormat("JWT")
+                                .description("JWT token obtained via POST /api/auth/login")))
                 .servers(List.of(
                         new Server().url("http://localhost:8082").description("Direct"),
                         new Server().url("http://localhost:8080").description("Via API Gateway")))
