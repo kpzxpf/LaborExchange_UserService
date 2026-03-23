@@ -1,7 +1,10 @@
 package com.vlz.laborexchange_userservice.controller;
 
+import com.vlz.laborexchange_userservice.dto.ChangePasswordRequest;
+import com.vlz.laborexchange_userservice.dto.ForgotPasswordRequest;
 import com.vlz.laborexchange_userservice.dto.LoginRequest;
 import com.vlz.laborexchange_userservice.dto.RegisterRequest;
+import com.vlz.laborexchange_userservice.dto.ResetPasswordRequest;
 import com.vlz.laborexchange_userservice.dto.UserDto;
 import com.vlz.laborexchange_userservice.mapper.UserMapper;
 import com.vlz.laborexchange_userservice.service.UserService;
@@ -15,6 +18,8 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @Tag(name = "Users", description = "User CRUD and lookup operations")
@@ -112,5 +117,70 @@ public class UserController {
             @Parameter(description = "Email address", required = true, example = "ivan@example.com")
             @RequestParam String email) {
         return userService.getUserIdByEmail(email);
+    }
+
+    @SecurityRequirement(name = "Bearer Authentication")
+    @Operation(summary = "Change user password", description = "Verifies old password then updates to the new one.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "204", description = "Password changed successfully"),
+            @ApiResponse(responseCode = "400", description = "Wrong current password or validation error"),
+            @ApiResponse(responseCode = "404", description = "User not found")
+    })
+    @PutMapping("/{id}/password")
+    @ResponseStatus(org.springframework.http.HttpStatus.NO_CONTENT)
+    public void changePassword(
+            @Parameter(description = "User ID", required = true) @PathVariable Long id,
+            @RequestBody @Valid ChangePasswordRequest request) {
+        userService.changePassword(id, request);
+    }
+
+    @Operation(summary = "Initiate email verification", description = "Sends a verification link to the user's email.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "204", description = "Verification email sent"),
+            @ApiResponse(responseCode = "404", description = "User not found")
+    })
+    @PostMapping("/{id}/send-verification")
+    public ResponseEntity<Void> sendVerificationEmail(
+            @Parameter(description = "User ID", required = true) @PathVariable Long id) {
+        userService.initiateEmailVerification(id);
+        return ResponseEntity.noContent().build();
+    }
+
+    @Operation(summary = "Verify email by token")
+    @ApiResponses({
+            @ApiResponse(responseCode = "204", description = "Email verified"),
+            @ApiResponse(responseCode = "400", description = "Token not found"),
+            @ApiResponse(responseCode = "409", description = "Token already used"),
+            @ApiResponse(responseCode = "410", description = "Token expired")
+    })
+    @GetMapping("/verify-email")
+    public ResponseEntity<Void> verifyEmail(
+            @Parameter(description = "Verification token", required = true) @RequestParam String token) {
+        userService.verifyEmail(token);
+        return ResponseEntity.noContent().build();
+    }
+
+    @Operation(summary = "Initiate password reset", description = "Sends a password reset link to the given email.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "204", description = "Reset email sent"),
+            @ApiResponse(responseCode = "404", description = "User not found")
+    })
+    @PostMapping("/forgot-password")
+    public ResponseEntity<Void> forgotPassword(@RequestBody @Valid ForgotPasswordRequest request) {
+        userService.initiatePasswordReset(request);
+        return ResponseEntity.noContent().build();
+    }
+
+    @Operation(summary = "Reset password using token")
+    @ApiResponses({
+            @ApiResponse(responseCode = "204", description = "Password reset successfully"),
+            @ApiResponse(responseCode = "400", description = "Token not found"),
+            @ApiResponse(responseCode = "409", description = "Token already used"),
+            @ApiResponse(responseCode = "410", description = "Token expired")
+    })
+    @PostMapping("/reset-password")
+    public ResponseEntity<Void> resetPassword(@RequestBody @Valid ResetPasswordRequest request) {
+        userService.resetPassword(request);
+        return ResponseEntity.noContent().build();
     }
 }

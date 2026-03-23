@@ -11,6 +11,8 @@ spring:
       group-id: user-group
     topics:
       user-registration: user-registration
+      email-verification: email-verification
+      password-reset: password-reset
 
   flyway:
     enabled: true
@@ -85,3 +87,9 @@ management:
     export:
       prometheus:
         enabled: true
+  tracing:
+    sampling:
+      probability: 1.0
+  zipkin:
+    tracing:
+      endpoint: http://${ZIPKIN_HOST:localhost}:9411/api/v2/spans

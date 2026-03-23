@@ -15,7 +15,11 @@ public class KafkaTopicConfig {
     @Value("${spring.kafka.bootstrap-servers}")
     private String bootstrapAddress;
     @Value("${spring.kafka.topics.user-registration}")
-    private String newPostTopicName;
+    private String userRegistrationTopic;
+    @Value("${spring.kafka.topics.email-verification}")
+    private String emailVerificationTopic;
+    @Value("${spring.kafka.topics.password-reset}")
+    private String passwordResetTopic;
 
     @Bean
     public KafkaAdmin kafkaAdmin() {
@@ -26,6 +30,16 @@ public class KafkaTopicConfig {
 
     @Bean
     public NewTopic userRegisterTopic() {
-        return new NewTopic(newPostTopicName, 1, (short) 1);
+        return new NewTopic(userRegistrationTopic, 1, (short) 1);
+    }
+
+    @Bean
+    public NewTopic emailVerificationTopic() {
+        return new NewTopic(emailVerificationTopic, 1, (short) 1);
+    }
+
+    @Bean
+    public NewTopic passwordResetTopic() {
+        return new NewTopic(passwordResetTopic, 1, (short) 1);
     }
 }
